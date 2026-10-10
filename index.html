@@ -608,7 +608,6 @@ init();buildMemberGate();
 <div id="buildBack" class="modal-back" onclick="if(event.target===this)closeBuildModal()"><section id="buildModal" class="modal-card" role="dialog" aria-modal="true" aria-labelledby="buildTitle" style="max-width:900px;max-height:90vh;overflow:auto"><button class="xbtn" aria-label="بستن بستهٔ ساخت" onclick="closeBuildModal()">✕</button><h2 id="buildTitle">📦 بستهٔ ساخت چهار‌بُعدی کامل</h2><p id="buildIntro">چهار بُعد کامل: بنیاد راهبردی، راهنمای اجرا، ماتریس شخصی‌سازی و پرامپت مادر بازسازی.</p><div aria-label="چهار بُعد بستهٔ ساخت" style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0"><span class="mbtn">۱. بنیاد راهبردی</span><span class="mbtn">۲. راهنمای اجرا</span><span class="mbtn">۳. ماتریس شخصی‌سازی</span><span class="mbtn">۴. پرامپت مادر</span></div><textarea id="buildPrompt" readonly style="width:100%;min-height:48vh;resize:vertical;direction:rtl;text-align:right;padding:14px;border-radius:12px;border:1px solid #d8c9dc;font:14px/1.8 inherit;white-space:pre-wrap"></textarea><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="mbtn" id="copyBuildBtn" onclick="copyBuildPrompt()">📋 کپی پرامپت</button><button class="mbtn" onclick="closeBuildModal()">بستن</button></div><p id="copyBuildStatus" aria-live="polite"></p></section></div>
 <script>document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeHelp();closeBuildModal()}});</script>
 
-
 <script id="royalV6">
 /* ===== ROYAL V6 SCRIPT ===== */
 (function(){
