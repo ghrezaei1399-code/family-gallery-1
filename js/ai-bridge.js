@@ -1,21 +1,13 @@
 /* ==========================================================================
-   AI Bridge — اتصال فرانت‌اند گالری به Cloudflare Workers AI
-   آدرس ورکر فعال: https://futuremakers-api.ghrezaei1399.workers.dev
+   AI Bridge — اتصال فرانت‌اند گالری به Cloudflare Workers AI (هوشیار)
+   ورکر فعال: family-gallery-api
    ========================================================================== */
 
 (function () {
     'use strict';
 
-    // آدرس ورکر فعال شما در کلودفلر
-    const WORKER_URL = "https://futuremakers-api.ghrezaei1399.workers.dev";
-
-    // نگهداری سابقه پیام‌ها برای پیوستگی در گفت‌وگو
-    const chatHistory = [
-        {
-            role: "system",
-            content: "تو «هوشیار»، دستیار هوشمند و محرم خانواده خاندان رضائی هستی. با احترام، صمیمیت، دقت، و به زبان فارسی پاسخ بده."
-        }
-    ];
+    // آدرس ورکر فعال خاندان رضائی
+    const WORKER_URL = "https://family-gallery-api.ghrezaei1399.workers.dev";
 
     document.addEventListener('DOMContentLoaded', () => {
         const sendBtn = document.getElementById('aiSend');
@@ -24,72 +16,84 @@
 
         if (!sendBtn || !inputField || !chatLog) return;
 
-        async function sendMessage() {
-            const userText = inputField.value.trim();
-            if (!userText) return;
+        function appendMessage(sender, text, isAi = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = isAi ? 'ai-msg-bubble ai-reply' : 'ai-msg-bubble user-query';
+            msgDiv.style.margin = '8px 0';
+            msgDiv.style.padding = '10px 14px';
+            msgDiv.style.borderRadius = '12px';
+            msgDiv.style.lineHeight = '1.7';
+            msgDiv.style.fontSize = '0.95rem';
 
-            // ۱. ثبت پیام کاربر در صفحه
-            const userRow = document.createElement('p');
-            userRow.className = 'user-msg';
-            userRow.textContent = 'شما: ' + userText;
-            chatLog.appendChild(userRow);
+            if (isAi) {
+                msgDiv.style.background = 'rgba(212, 175, 55, 0.12)';
+                msgDiv.style.borderRight = '4px solid #d4af37';
+                msgDiv.style.color = '#fff';
+                msgDiv.innerHTML = `<strong>هوشیار:</strong> ${escapeHtml(text)}`;
+            } else {
+                msgDiv.style.background = 'rgba(255, 255, 255, 0.08)';
+                msgDiv.style.borderLeft = '4px solid #64b5f6';
+                msgDiv.style.color = '#eee';
+                msgDiv.innerHTML = `<strong>شما:</strong> ${escapeHtml(text)}`;
+            }
 
+            chatLog.appendChild(msgDiv);
+            chatLog.scrollTop = chatLog.scrollHeight;
+            return msgDiv;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        async function handleSend() {
+            const question = inputField.value.trim();
+            if (!question) return;
+
+            appendMessage('شما', question, false);
             inputField.value = '';
-            chatLog.scrollTop = chatLog.scrollHeight;
-
-            // ۲. ثبت پیام موقت «در حال پاسخ‌نویسی»
-            const aiRow = document.createElement('p');
-            aiRow.className = 'ai-msg';
-            aiRow.textContent = 'هوشیار: در حال اندیشیدن و پاسخ‌نویسی...';
-            chatLog.appendChild(aiRow);
-            chatLog.scrollTop = chatLog.scrollHeight;
-
-            // غیرفعال کردن موقت دکمه ارسال
+            inputField.disabled = true;
             sendBtn.disabled = true;
 
-            // افزودن پیام کاربر به تاریخچه
-            chatHistory.push({ role: "user", content: userText });
+            const loadingBubble = appendMessage('هوشیار', 'در حال اندیشیدن و پاسخ‌گویی...', true);
 
             try {
-                // ۳. ارسال درخواست به کلودفلر ورکر
                 const response = await fetch(`${WORKER_URL}/api/ai/chat`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        messages: chatHistory
+                        prompt: question
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`خطای سرور: ${response.status}`);
-                }
-
                 const data = await response.json();
-                const aiReply = data.reply || data.response || "پاسخی از مدل دریافت نشد.";
 
-                // ۴. به‌روزرسانی متن پاسخ و ثبت در تاریخچه
-                aiRow.textContent = 'هوشیار: ' + aiReply;
-                chatHistory.push({ role: "assistant", content: aiReply });
-
+                if (response.ok && data.success) {
+                    const aiText = data.reply || data.response || data.message || "پاسخی دریافت نشد.";
+                    loadingBubble.innerHTML = `<strong>هوشیار:</strong> ${escapeHtml(aiText)}`;
+                } else {
+                    const errMsg = data.error || 'خطایی رخ داده است.';
+                    loadingBubble.innerHTML = `<strong>هوشیار:</strong> <span style="color:#ff8a80;">${escapeHtml(errMsg)}</span>`;
+                }
             } catch (err) {
-                console.error("AI Bridge Error:", err);
-                aiRow.textContent = 'هوشیار: متأسفانه در برقراری ارتباط با هسته هوش مصنوعی خطایی رخ داد. لطفاً اتصال اینترنت خود را بررسی کنید.';
+                loadingBubble.innerHTML = `<strong>هوشیار:</strong> <span style="color:#ff8a80;">خطا در برقراری ارتباط با خادم. لطفاً اتصال اینترنت را بررسی کنید.</span>`;
             } finally {
+                inputField.disabled = false;
                 sendBtn.disabled = false;
+                inputField.focus();
                 chatLog.scrollTop = chatLog.scrollHeight;
             }
         }
 
-        // رویداد کلیک روی دکمه ارسال
-        sendBtn.addEventListener('click', sendMessage);
-
-        // رویداد زدن دکمه اینتر
+        sendBtn.addEventListener('click', handleSend);
         inputField.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                sendMessage();
+                handleSend();
             }
         });
     });
