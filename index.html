@@ -514,7 +514,7 @@ function closeStory(){document.getElementById('storyBack').classList.remove('ope
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePw();closeStory();closeHelp();if(selected!==null)closeProfile()}});
 function init(){updateTicker();renderPublic();renderPrivate();refreshStats();let ok=false;try{ok=sessionStorage.getItem('rezaei_authenticated')==='1'}catch(e){}if(!ok){document.getElementById('login').classList.remove('hidden');setTimeout(()=>{try{document.getElementById('pw').focus({preventScroll:true})}catch(e){document.getElementById('pw').focus()}window.scrollTo(0,0)},120)}}
 /* ===== Houshyar Live AI Bridge (Cloudflare Worker) ===== */
-const AI_ENDPOINT='https://futuremakers-api.ghrezaei1399.workers.dev/api/ai/chat';
+const AI_ENDPOINT='https://family-gallery-api.ghrezaei1399.workers.dev/api/ai/chat';
 let aiHistory=read('rezaei_houshyar_history',[]);
 let aiBusy=false;
 function aiSetStatus(t){let e=document.getElementById('aiStatus');if(e)e.textContent=t}
