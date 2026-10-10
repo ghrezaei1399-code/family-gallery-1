@@ -1,0 +1,5 @@
+/* Accessible theme controls and local appearance preferences. */
+(function(){'use strict';const G=window.FamilyGallery;if(!G)return;const themes={gold:['#8a6425','#fffaf3'],ruby:['#8e3651','#fff5f7'],emerald:['#26745e','#f3fbf6']};
+ function apply(){const s=G.state.settings,t=themes[s.theme]||themes.gold;document.documentElement.style.setProperty('--ink',t[0]);document.body.classList.toggle('night',!!s.night);document.querySelectorAll('[data-theme]').forEach(b=>b.classList.toggle('active',b.dataset.theme===s.theme))}
+ document.addEventListener('DOMContentLoaded',()=>{apply();document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{G.state.settings.theme=b.dataset.theme;G.save();apply()}));const night=document.getElementById('nightBtn');if(night)night.addEventListener('click',()=>{G.state.settings.night=!G.state.settings.night;G.save();apply()});const studio=document.getElementById('studioBtn');if(studio)studio.addEventListener('click',()=>{const bar=document.getElementById('themeBar');if(bar)bar.classList.toggle('open')})});
+})();

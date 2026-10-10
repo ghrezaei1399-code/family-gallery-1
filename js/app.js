@@ -1,0 +1,2 @@
+/* Application startup and profile navigation. */
+(function(){'use strict';document.addEventListener('DOMContentLoaded',()=>{const G=window.FamilyGallery;if(!G)return;G.renderMembers();G.count();const close=document.getElementById('closeProfile');if(close)close.addEventListener('click',()=>{document.getElementById('profile').classList.add('hidden');G.activeMember=null});document.querySelectorAll('[data-person]').forEach(b=>b.addEventListener('click',()=>G.openProfile(b.dataset.person)));});})();
