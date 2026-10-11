@@ -7,7 +7,7 @@
     'use strict';
 
     // آدرس ورکر فعال خاندان رضائی
-    const WORKER_URL = "https://family-gallery-api.ghrezaei1399.workers.dev";
+    const WORKER_URL = "https://family-gallery-api.ghrezaei1399.workers.dev/api/ai/chat";
 
     document.addEventListener('DOMContentLoaded', () => {
         const sendBtn = document.getElementById('aiSend');
